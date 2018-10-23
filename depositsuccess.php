@@ -5,6 +5,7 @@ include("functionClass.php");
 $functionClass = new FunctionClass(); 
 if (!isset($_SESSION['gamblingtec']['access_token']) && $_SESSION['gamblingtec']['access_token']=="") {
     header("location: login.php");
+    die();
 }
 require_once __DIR__.'/vendor/autoload.php';
   
