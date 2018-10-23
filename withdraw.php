@@ -8,7 +8,7 @@ if (!isset($_SESSION['gamblingtec']['access_token']) && $_SESSION['gamblingtec']
 }
 require_once __DIR__.'/vendor/autoload.php';
 $functionClass->isAccessTokenExpired();
-$withdraw_auth_url = "https://sandbox.gamblingtec.com/widget/balances";
+$withdraw_auth_url = $connectionDetail['oauth']['withdrawUrl'];
 ?>
 <!doctype html>
 <html lang="en">

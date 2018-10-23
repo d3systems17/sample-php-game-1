@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "52db2b35c369484471fe6e9f1827f76a",
+    "content-hash": "91abebb4f5170407d8b88a14205438f4",
     "packages": [
         {
             "name": "datto/json-rpc",

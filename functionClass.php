@@ -105,7 +105,7 @@ class FunctionClass
     function getResourceOwnerDetails( $access_token = '' )
     {
         global $connectionDetail;
-        $token_url   = $connectionDetail['oauth']['endpoint'] . $connectionDetail['oauth']['urlResourceOwnerDetails'] . $access_token;
+        $token_url   = $connectionDetail['oauth']['endpoint'] . $connectionDetail['oauth']['urlResourceOwnerDetails']."?access_token=" . $access_token;
         $curl_handle = curl_init();
         curl_setopt( $curl_handle, CURLOPT_URL, $token_url );
         curl_setopt( $curl_handle, CURLOPT_HEADER, false );
@@ -219,8 +219,7 @@ class FunctionClass
             $curent_date_time = $result['curent_date_time'];
             $time_different   = $result['time_different'];
             $lastInsertId     = $result['id'];
-            //$req_dump = print_r($result, true);
-            //$fp = file_put_contents('game_code.txt', $req_dump, FILE_APPEND);
+             
             if ( $time_different > 10 ) {
                 $stmt2 = $DBH->prepare( "update GameSession set game_session='close' ,update_date=now() where game_code=:game_code and currency=:currency and user_proxy_id=:user_proxy_id        " );
                 $stmt2->bindValue( ':currency', $currency );
@@ -331,7 +330,7 @@ class FunctionClass
         $userUuid = $_SESSION['gamblingtec']['uuid'];
         //  and trans_type='credit' 
         $stmt     = $DBH->prepare( "SELECT tr.*,cur.code,cur.left_symbol,cur.right_symbol,cur.exponent FROM Transaction  AS tr, CurrencyBaseValue AS cur 
-WHERE tr.currency_type=cur.code AND tr.user_proxy_id=:user_proxy_id" );
+WHERE tr.currency_type=cur.code AND tr.user_proxy_id=:user_proxy_id order by id desc" );
         $stmt->bindValue( ':user_proxy_id', $userUuid );
         $stmt->execute();
         //$balance_detail = $stmt->fetchAll();
@@ -403,7 +402,7 @@ WHERE tr.currency_type=cur.code AND tr.user_proxy_id=:user_proxy_id" );
         $token_url   = $connectionDetail['oauth']['endpoint'] . $connectionDetail['oauth']['urlPostSale']; // "/api/v1/post-sales";
         $curl_handle = curl_init();
         curl_setopt( $curl_handle, CURLOPT_URL, $token_url );
-        curl_setopt( $curl_handle, CURLOPT_HEADER, false );
+        curl_setopt( $curl_handle, CURLOPT_HEADER, true );
         curl_setopt( $curl_handle, CURLOPT_RETURNTRANSFER, true );
       
         curl_setopt( $curl_handle, CURLOPT_POST, true );

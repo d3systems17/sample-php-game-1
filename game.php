@@ -7,6 +7,7 @@ $currency = ( $_SESSION['gamblingtec']['currency'] != '' ) ? $_SESSION['gambling
 require_once __DIR__.'/vendor/autoload.php';
 if (!isset($_SESSION['gamblingtec']['access_token']) && $_SESSION['gamblingtec']['access_token']=="") {
    header("location: login.php");
+   die();
 }
     //$current_balance  = $functionClass->getCurrentBalances($_SESSION['gamblingtec']);
     $functionClass->isAccessTokenExpired();

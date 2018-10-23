@@ -4,7 +4,7 @@
 if ( function_exists( 'date_default_timezone_set' ) )
 date_default_timezone_set("Europe/London");
 
-define('DEBUG',true);
+define('DEBUG',false);
 $connectionDetail = parse_ini_file("dbconfig.ini",true);
 $host = $connectionDetail['database']['host'];
 $dbname = $connectionDetail['database']['dbname'];

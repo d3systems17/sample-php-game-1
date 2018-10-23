@@ -6,6 +6,7 @@ $functionClass = new FunctionClass();
 require_once __DIR__ . '/vendor/autoload.php';
 if (!isset($_SESSION['gamblingtec']['access_token']) && $_SESSION['gamblingtec']['access_token'] == "") {
     header("location: login.php");
+    die();
 }
 $functionClass->isAccessTokenExpired();
 ?>

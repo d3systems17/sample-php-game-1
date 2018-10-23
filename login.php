@@ -19,23 +19,13 @@ $code = (isset($_GET['code']))?$_GET['code']:'';
 if ( !isset( $code ) || $code == "" ) {
     //   die("Error - code parameter missing from request!");
     
-    if ( isset( $_SESSION['gamblingtec']['access_token1'] ) ) {
-       // header( 'Location: game.php' );
-    } //isset( $_SESSION['gamblingtec']['access_token'] )
-    else {
+    if ( isset( $_SESSION['gamblingtec']['access_token'] ) ) {
+        header( 'Location: dashboard.php' );
+    } else {
         $options = array('scope' => 'transparent');
-          
- 
-        // Get the state generated for you and store it to the session.
-           
-    
-           // $auth_url = $connectionDetail['oauth']['endpoint'] . "/oauth/authorize?scope=transparent&response_type=code&state=" . $state . "&client_id=" . $connectionDetail['oauth']['clientId'] . "&redirect_uri=" . urlencode( $connectionDetail['oauth']['redirectUri'] );
-           
-            $auth_url = $provider->getAuthorizationUrl($options);
-            $_SESSION['gamblingtec']['oauth2state'] = $state = $provider->getState();
-        
-          //  header( "location: " . $auth_url );
-		    //exit;
+         // Get the state generated for you and store it to the session.
+        $auth_url = $provider->getAuthorizationUrl($options);
+        $_SESSION['gamblingtec']['oauth2state'] = $state = $provider->getState();
     }
     
     
@@ -50,24 +40,10 @@ elseif (empty($_GET['state']) || (isset($_SESSION['gamblingtec']['oauth2state'])
     
 
 } else {
-    
-    /*
-    $json_response = $functionClass->getAccessToken( $code, 'authorization_code' );
-    
-    
-    
-    $response = json_decode( $json_response['content'], true );
-   // print_r( $response );
-    
-    $access_token  = $response['access_token'];
-    $expires_in    = $response['expires_in'];
-    $token_type    = $response['token_type'];
-    $scope         = $response['scope'];
-    $refresh_token = $response['refresh_token'];
-    */
-    $accessToken = $provider->getAccessToken('authorization_code', [
-        'code' => $code
-    ]);
+    try {
+         
+    $accessToken = $provider->getAccessToken('authorization_code', ['code' => $code, 'scope' => 'transparent']);
+
    // print_r($accessToken);
     $access_token  = $accessToken->getToken() ;
     $refresh_token = $accessToken->getRefreshToken() ;
@@ -76,19 +52,12 @@ elseif (empty($_GET['state']) || (isset($_SESSION['gamblingtec']['oauth2state'])
     $scope         = $values['scope'];
     $token_type    = $values['token_type'];
 
-    if ( !isset( $access_token ) || $access_token == "" ) {
-        echo '  <meta http-equiv="refresh" content="10;url=login.php"> ';
-        die( "Error - access token missing from response!" );
-    } //!isset( $access_token ) || $access_token == ""
-    
-    
-    
-      
-        // The provider provides a way to get an authenticated API request for
-        // the service, using the access token; it returns an object conforming
-        // to Psr\Http\Message\RequestInterface.
+        if ( !isset( $access_token ) || $access_token == "" ) {
+            echo '  <meta http-equiv="refresh" content="10;url=login.php"> ';
+            die( "Error - access token missing from response!" );
+        } //!isset( $access_token ) || $access_token == ""
         
-        
+           
         $_SESSION['gamblingtec']['access_token']  = $access_token;
         $_SESSION['gamblingtec']['expires_in']    = $expires_in;
         $_SESSION['gamblingtec']['token_type']    = $token_type;
@@ -97,9 +66,9 @@ elseif (empty($_GET['state']) || (isset($_SESSION['gamblingtec']['oauth2state'])
 		
         $_SESSION['gamblingtec']['created'] = time();
         
-        
-       // $json_response = $functionClass->getResourceOwnerDetails($_SESSION['gamblingtec']['access_token'],'client_credentials');
+        //geting Resource Owner Details via culr
         $json_response = $functionClass->getResourceOwnerDetails($access_token);
+
 		$response = json_decode( $json_response['content'], true );	
 		//calling function to add uuid and username in db
 		$_SESSION['gamblingtec']['uuid']     = $response['uuid'];
@@ -109,6 +78,13 @@ elseif (empty($_GET['state']) || (isset($_SESSION['gamblingtec']['oauth2state'])
 		$addUsername = $functionClass->updateUserName($response);	
 	 	 header( 'Location: game.php' ) ;
 		 exit;
+    } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+
+        // Failed to get the access token or user details.
+        exit($e->getMessage());
+
+    }
+    
     
 }
 

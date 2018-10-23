@@ -10,16 +10,7 @@ require_once __DIR__.'/vendor/autoload.php';
   
 $functionClass->isAccessTokenExpired();
 
-//$json_response = $functionClass->getResourceOwnerDetails($_SESSION['gamblingtec']['access_token'],'client_credentials');
-/*
-$response = json_decode( $json_response['content'], true );	
-
- //calling function to add uuid and username in db
- if(sizeof($response)>0){
-	$addUsername = $functionClass->updateUserName($response);	
- }
-*/
-$deposite_url = "https://sandbox.gamblingtec.com/widget/launch/".$connectionDetail['oauth']['gameProviderUuid']."?type=deposit&return=http://samplegame.gtec.io/depositsuccess.php";
+$deposite_url = $connectionDetail['oauth']['depositUrl'].$connectionDetail['oauth']['gameProviderUuid']."?type=deposit&return=".$connectionDetail['oauth']['depositRetunUrl'];
 $current_balance = $functionClass->getCurrentBalances($_SESSION['gamblingtec']);
  
         

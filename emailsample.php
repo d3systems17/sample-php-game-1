@@ -10,28 +10,29 @@ $functionClass = new FunctionClass();
 $currency = $connectionDetail['default']['currency'];
 
 $provider = new \League\OAuth2\Client\Provider\GenericProvider([
-    'clientId'                => $connectionDetail['oauth']['clientId'],       // The client ID       assigned to you by the provider
-    'clientSecret'            => $connectionDetail['oauth']['clientSecret'],   // The client password assigned to you by the provider
-    'redirectUri'             => $connectionDetail['oauth']['redirectUri'],
-    'urlAuthorize'            => $connectionDetail['oauth']['endpoint'] . $connectionDetail['oauth']['urlAuthorize'],
-    'urlAccessToken'          => $connectionDetail['oauth']['endpoint'] . $connectionDetail['oauth']['urlAccessToken'],
+    'clientId' => $connectionDetail['oauth']['clientId'],    // The client ID assigned to you by the provider
+    'clientSecret' => $connectionDetail['oauth']['clientSecret'],   // The client password assigned to you by the provider
+    'redirectUri' => $connectionDetail['oauth']['redirectUri'],
+    'urlAuthorize' => $connectionDetail['oauth']['endpoint'] . $connectionDetail['oauth']['urlAuthorize'],
+    'urlAccessToken' => $connectionDetail['oauth']['endpoint'] . $connectionDetail['oauth']['urlAccessToken'],
     'urlResourceOwnerDetails' => $connectionDetail['oauth']['endpoint'] . $connectionDetail['oauth']['urlResourceOwnerDetails']
 ]);
 
 try {
-
-    // Try to get an access token using the resource owner password credentials grant.
-    $options             = array('scope' => 'mail');
-    $accessToken         = $provider->getAccessToken('client_credentials');
-    echo 'Access Token   : ' . "<br>" .
-    $token_id            = $accessToken->getToken();
-
+  // Try to get an access token using the resource owner password credentials grant.
+  $options = array('scope' => 'mail');
+  $accessToken = $provider->getAccessToken('client_credentials', $options);
+   echo 'Access Token: ' . "<br>" .
+      $token_id = $accessToken->getToken();
+   
+  die("die");
 
     //mail ontnet
     $mess_body_html  = file_get_contents("mailtemplate/mailhtml.html");
     $mess_body_plain = file_get_contents("mailtemplate/mailplain.txt");
     //end of mail content
     $postData = array();
+    $postData['scope'] = "mail";
     $postData['subject'] = "{{!}}Your subject here!";
     $postData['html'] = $mess_body_html;
     $postData['plaintext'] = $mess_body_plain;
@@ -39,25 +40,29 @@ try {
     $postData['run_now'] = 'true';
     //$response_json = $functionClass->sendMailAPI($token_id, $postData);
 
-    echo $token_url   = $connectionDetail['oauth']['endpoint'] . $connectionDetail['oauth']['urlMail']; // "/api/v1/post-sales";
+    echo "<br>".
+    $token_url   = $connectionDetail['oauth']['endpoint'] . $connectionDetail['oauth']['urlMail']; // "/api/v1/post-sales";
+
     $curl_handle = curl_init();
     curl_setopt( $curl_handle, CURLOPT_URL, $token_url );
-    curl_setopt( $curl_handle, CURLOPT_HEADER, false );
-    curl_setopt( $curl_handle, CURLOPT_RETURNTRANSFER, true );
+    //curl_setopt( $curl_handle, CURLOPT_HEADER, false );
+    //curl_setopt( $curl_handle, CURLOPT_RETURNTRANSFER, true );
   
     curl_setopt( $curl_handle, CURLOPT_POST, true );
-   
-    curl_setopt( $curl_handle, CURLOPT_HTTPHEADER, array(
-         "authorization: Bearer " . $token_id,
-     
-        "content-type: application/json" 
-    ) );
+    curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
+        "authorization: Bearer ".$token_id,
+        "cache-control: no-cache",
+        "content-type: application/json"
+        
+      ));
+    
+    
     
     curl_setopt( $curl_handle, CURLOPT_POSTFIELDS, json_encode( $postData ) );
     $response_json = curl_exec( $curl_handle );
    
     curl_close( $curl_handle );
-
+    print_r("Response here ");
     print_r($response_json);
   
  

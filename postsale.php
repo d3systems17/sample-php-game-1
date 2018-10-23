@@ -24,11 +24,11 @@ try {
     $options = array('scope' => 'post-sales');
     $accessToken = $provider->getAccessToken('client_credentials', $options);
     //echo 'Access Token: ' . "<br>" .
-        $token_id = $accessToken->getToken();
+    $token_id = $accessToken->getToken();
  
     $closeInactiveGameSession = $functionClass->closeInactiveGameSession();
     $game_stats_data = $functionClass->getGameResultStats();
-    echo "<pre>";
+   // echo "<pre>";
 // print_r($game_stats_data);
 
     $postData = array();
@@ -40,14 +40,14 @@ try {
             $postData['cost'] = $value_game_stats['cost'];
             $postData['net'] = $value_game_stats['net'];
             $postData['currency'] = $value_game_stats['currency'];
-            $postData['is_credit'] = 'false';
+            $postData['is_credit'] = false;
             $postData['game_transaction_id'] = $key_game_id;
             $postData['game_code'] = $connectionDetail['oauth']['gameProviderUuid'];
             $postData['user_uuid'] = $key_user_uuid;
-             print_r($postData);
+           // print_r($postData);
             $responseGameResuTPostSale_json = $functionClass->requestGameResultPostSale($token_id, $postData);
             $responseGameResuTPostSale = json_decode($responseGameResuTPostSale_json, true);
-            print_r($responseGameResuTPostSale);
+            //print_r($responseGameResuTPostSale);
             if ($responseGameResuTPostSale['status'] == "success" && isset($responseGameResuTPostSale['transaction_id'])) {
                 $gameResultPostSaleUpdate = $functionClass->setGameResultPostSaleUpdate($key_game_id, $responseGameResuTPostSale);
             }
